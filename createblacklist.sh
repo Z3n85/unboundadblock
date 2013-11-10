@@ -19,23 +19,15 @@ PERMISSIONS=500
 #Unbound restart script
 UNBOUNDRESTART=/etc/rc.d/unbound\ restart
 
-#Temporary files
-TMPFILE="/tmp/blacklist.tmp"
-WORKFILE="/tmp/work.tmp"
 
 ###################################################################################
 #This part does stuff
 
-#Housecleaning old files, just in case
+#Housecleaning old file, just in case
 rm $FINALLIST
-rm $TMPFILE
-rm $WORKFILE
 
-#retrieve new IP list
-curl $BLACKLISTURL >> $TMPFILE
-
-#Parse out non-URL entries
-grep -v [^a-z0-9\.\*] $TMPFILE | grep [a-z0-9A-Z] |while read line; do
+#Get blacklist, Parse out non-URL entries
+curl $BLACKLISTURL | grep -v [^a-z0-9\.\*] | grep [a-z0-9A-Z] |while read line; do
 
 	echo "local-zone: \"$line\" redirect" >> $FINALLIST
 	echo "local-data: \"$line A 127.0.0.1\"" >> $FINALLIST
