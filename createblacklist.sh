@@ -35,17 +35,7 @@ rm $WORKFILE
 curl $BLACKLISTURL >> $TMPFILE
 
 #Parse out non-URL entries
-grep -v [^a-z0-9\.\*] $TMPFILE >> $WORKFILE
-
-#Kill off the tmpfile, or else it matains old data when new data is appended in
-rm $TMPFILE 
-
-#remove whitespace/extra lines, dump into tempfile
-grep [a-z0-9A-Z] $WORKFILE >> $TMPFILE 
-
-
-#read in sanitized urls from tmpfile, format them in correct fashion for unbound to read
-cat $TMPFILE |while read line;do
+grep -v [^a-z0-9\.\*] $TMPFILE | grep [a-z0-9A-Z] |while read line; do
 
 	echo "local-zone: \"$line\" redirect" >> $FINALLIST
 	echo "local-data: \"$line A 127.0.0.1\"" >> $FINALLIST
