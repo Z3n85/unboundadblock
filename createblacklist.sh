@@ -27,7 +27,7 @@ UNBOUNDRESTART=/etc/rc.d/unbound\ restart
 rm $FINALLIST
 
 #Get blacklist, Parse out non-URL entries
-curl $BLACKLISTURL | grep -v [^a-z0-9\.\*] | sed 's/[[:space:]]//g' |while read line; do
+curl $BLACKLISTURL | sed -n '/[^a-z0-9\.\*]/!p' | sed -n '/[a-zA-Z0-0]/p' |while read line; do
 
 	echo "local-zone: \"$line\" redirect" >> $FINALLIST
 	echo "local-data: \"$line A 127.0.0.1\"" >> $FINALLIST
