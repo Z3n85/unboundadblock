@@ -7,4 +7,6 @@ include: "/your/blacklist/file/location.file"
 
 Add to crontab daily or weekly, and enjoy ad free browing.  
 
-Made / tested on OpenBSD 5.3 - contains some basic stuff for setting permissions and using a different restart script if you want to use it somewhere else.  
+Made / tested on OpenBSD 5.3 - contains some basic stuff for setting permissions and using a different restart script if you want to use it somewhere else. 
+
+Now with a much faster, much lighter weight, much less readable version.   

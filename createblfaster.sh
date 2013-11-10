@@ -23,16 +23,8 @@ UNBOUNDRESTART=/etc/rc.d/unbound\ restart
 ###################################################################################
 #This part does stuff
 
-#Housecleaning old file, just in case
-rm $FINALLIST
-
-#Get blacklist, Parse out non-URL entries
-curl $BLACKLISTURL | grep -v [^a-z0-9\.\*] | sed 's/[[:space:]]//g' |while read line; do
-
-	echo "local-zone: \"$line\" redirect" >> $FINALLIST
-	echo "local-data: \"$line A 127.0.0.1\"" >> $FINALLIST
-
-done
+#Get blacklist, Parse out non-URL entries, dump to blacklist file
+curl $BLACKLISTURL | sed -n '/[^a-z0-9\.\*]/!p' | sed -n '/[a-zA-Z0-0]/p' | awk '{print "local-zone: \""$0"\" redirect\nlocal-data: \""$0" A 127.0.0.1\""}' > $FINALLIST
 
 #change permissions on final blacklist file
 chown $OWNER:$GROUP $FINALLIST
