@@ -26,10 +26,11 @@ UNBOUNDRESTART=/etc/rc.d/unbound\ restart
 
 ###################################################################################
 #This part does stuff
+#Get blacklist from URL, load static blacklist for parsing
 blacklist="$(curl $BLACKLISTURL)"
 static="$(cat $STATICBLACKLIST)"
 
-#Get blacklist, Parse out non-URL entries, dump to blacklist file
+#Parse out non-URL entries, dump to blacklist file
 echo "$blacklist$static" | sed -n '/[^a-z0-9\.\*]/!p' | sed -n '/[a-zA-Z0-0]/p' | awk '{print "local-zone: \""$0"\" redirect\nlocal-data: \""$0" A 127.0.0.1\""}' > $FINALLIST 
 
 #change permissions on final blacklist file
