@@ -26,21 +26,15 @@ UNBOUNDRESTART=/etc/rc.d/unbound\ restart
 
 ###################################################################################
 #This part does stuff
-
-
 blacklist="$(curl $BLACKLISTURL)"
 static="$(cat $STATICBLACKLIST)"
 
 #Get blacklist, Parse out non-URL entries, dump to blacklist file
-output=$(echo "$blacklist$static" | sed -n '/[^a-z0-9\.\*]/!p' | sed -n '/[a-zA-Z0-0]/p' | awk '{print "local-zone: \""$0"\" redirect\nlocal-data: \""$0" A 127.0.0.1\""}') 
-echo "$output" > $FINALLIST
+echo "$blacklist$static" | sed -n '/[^a-z0-9\.\*]/!p' | sed -n '/[a-zA-Z0-0]/p' | awk '{print "local-zone: \""$0"\" redirect\nlocal-data: \""$0" A 127.0.0.1\""}' > $FINALLIST 
 
-#cat $STATICBLACKLIST | sed -n '/[^a-z0-9\.\*]/!p' | sed -n '/[a-zA-Z0-0]/p' | awk '{print "local-zone: \""$0"\" redirect\nlocal-data: \""$0" A 127.0.0.1\""}' >> $FINALLIST
 #change permissions on final blacklist file
 chown $OWNER:$GROUP $FINALLIST
 chmod $PERMISSIONS $FINALLIST
 
-#restart service
-#output="$(echo "$output"; $UNBOUNDRESTART)"
-#echo "$output"
+#restart service, redirect output to mail
 $UNBOUNDRESTART | mail -s "YourDNSBlockUpdate" $EMAIL 
